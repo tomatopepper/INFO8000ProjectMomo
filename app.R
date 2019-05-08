@@ -8,7 +8,7 @@
 #
 
 library(shiny)
-
+library(caret)
 # Define UI for application that draws a histogram
 ui <- fluidPage(
 
@@ -47,7 +47,13 @@ ui <- fluidPage(
 server <- function(input, output) {
 
     output$distPlot <- renderTable({
-        data_model <- read.csv("/Users/limengxie/Desktop/INFO8000_Project_Momo/data_model.csv")
+        data_model <- read.csv("/Users/limengxie/Desktop/INFO8000ProjectMomo/data_model.csv")
+        fitControl <- trainControl(
+            method="repeatedcv",
+            number=10,
+            repeats=10,
+            verboseIter = FALSE)
+        set.seed(981395)
         inTraining <- createDataPartition(y=data_model$environment, p=0.8,list=FALSE)
         training <- data_model[inTraining,]
         testing <- data_model[-inTraining,]
@@ -57,9 +63,9 @@ server <- function(input, output) {
         trainNormalized<- predict(preProcValues, training)
         testNormalized<- predict(preProcValues, testing)
         #model for shiny 
-        svmFit8<- train(environment ~RTP_COUNT+plantmass+TD_AVG,data=trainNormalized,method="svmLinear",tr=fitControl)
+        svmFit<- train(environment ~RTP_COUNT+plantmass+TD_AVG,data=trainNormalized,method="svmLinear",tr=fitControl)
         newInput <- data.frame(RTP_COUNT=input$RTP_COUNT, plantmass=input$plantmass, TD_AVG=input$TD_AVG)
-        newValue <- predict(svmFit8, newdata = newInput)
+        newValue <- predict(svmFit, newdata = newInput)
         newValue
     })
 }
