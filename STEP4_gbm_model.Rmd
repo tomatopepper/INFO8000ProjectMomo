@@ -1,5 +1,11 @@
-# The stochastic gradient boosting model(gbm) is used for classificaiont and regression. 
-# The gbm is based on decision tree algorithm. The pitfall of gbm is hard to interpret. 
+---
+title: "STEP4_gbm"
+author: "Limeng Xie"
+date: "5/8/2019"
+output: html_document
+---
+The stochastic gradient boosting model(gbm) is used for classificaiont and regression. The gbm is based on decision tree algorithm. The pitfall of gbm is hard to interpret. 
+```{r}
 library(caret)
 setwd("/Users/limengxie/Desktop/INFO8000ProjectMomo/")
 data_model <- read.csv("data_model.csv")
@@ -20,9 +26,17 @@ fitControl <- trainControl(
     verboseIter = FALSE)
 Fit_Normalized <- train(environment~.,data=trainNormalized,method="gbm",trControl=fitControl,verbose=FALSE)
 Fit_Normalized
+fitControl <- trainControl(
+    method="repeatedcv",
+    number=10,
+    repeats=10,
+    verboseIter = FALSE)
+Fit_Normalized <- train(environment~.,data=trainNormalized,method="gbm",trControl=fitControl,verbose=FALSE)
+Fit_Normalized
 # the best model is with n.trees = 150, interaction.depth = 2, shrinkage = 0.1 and n.minobsinnode = 10.
-# the accuary is 92.54%.
+# the accuary is 92.54%.aa
 pred <- predict(Fit_Normalized, newdata = testNormalized)
 truth <- testNormalized$environment
 confusionMatrix(pred,truth)
 # the confusion matrix shows the balanced predict accuracy is pretty good
+```

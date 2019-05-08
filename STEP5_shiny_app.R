@@ -13,24 +13,24 @@ library(caret)
 ui <- fluidPage(
 
     # Application title
-    titlePanel("svm model to predict common bean has enough water"),
+    titlePanel("Have commonbean underwent water stress?"),
 
     # Sidebar with a slider input for number of bins 
     sidebarLayout(
         sidebarPanel(
             sliderInput("RTP_COUNT",
                         "Number of root tips:",
-                        min = 1,
-                        max = 200,
-                        value = 30),
+                        min = 0,
+                        max = 50,
+                        value = 20),
             sliderInput("plantmass",
                         "Dryweigt of aboveground plant biomass:",
-                        min = 1,
+                        min = 0,
                         max = 50,
-                        value = 23),
+                        value = 25),
             sliderInput("TD_AVG",
-                        "Total average diameter:",
-                        min = 0.01,
+                        "Tip average diameter:",
+                        min = 0.00,
                         max = 2.50,
                         value = 0.26)
           

@@ -1,5 +1,11 @@
-# netural networks algorithm is used for regression and classification. Nnet is like blackbox, it is 
-# very hard for human to understand and intepret. 
+---
+title: "STEP4_nnet_model"
+author: "Limeng Xie"
+date: "5/8/2019"
+output: html_document
+---
+netural networks algorithm is used for regression and classification. Nnet is like blackbox, it is very hard for human to understand and intepret. 
+```{r}
 library(caret)
 setwd("/Users/limengxie/Desktop/INFO8000ProjectMomo/")
 data_model <- read.csv("data_model.csv")
@@ -21,6 +27,7 @@ fitControl <- trainControl(
 # nnet algorithm
 Fit_Normalized_nnet<- train(environment~.,data=trainNormalized,method="nnet",trControl=fitControl,verbose=FALSE)
 Fit_Normalized_nnet
+# The optimal model were size = 5 and decay = 0.1.
 predict(Fit_Normalized_nnet, newdata = testNormalized)
 pred <- predict(Fit_Normalized_nnet, newdata = testNormalized)
 truth <- testNormalized$environment

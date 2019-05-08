@@ -1,4 +1,16 @@
-## The goals of this script are: 1 fix the experiment tag format of biomass data 2. Commbine L88_57_ww and L88_57_ws and add environment factor ww(well water) and ws(water stress) in the combined file 3. match the biomass data with root data by experiment tag 4. exclude the duplicates data due human or computer error 5. exclude the NAs missing data
+---
+title: "STEP1_CleanData"
+author: "Limeng Xie"
+date: "5/8/2019"
+output: html_document
+---
+
+The goals of this script are: 
+1. fix the experiment tag format of biomass data
+2. Commbine L88_57_ww and L88_57_ws and add environment factor ww(well water) and ws(water stress) in the combined file 
+3. match the biomass data with root data by experiment tag 
+4. exclude the duplicates data due human or computer error 5. exclude the NAs missing data
+```{r}
 # read the csv files
 setwd("/users/limengxie/Desktop/INFO8000ProjectMomo//")
 # regular expression to replace . with _ for experimental tag
@@ -7,7 +19,9 @@ tag <- biomass$plot.ID
 Experiment.Tag <- gsub("\\.","_",tag)
 plantmass<- biomass$dry.weight.1.shoot.plus.bag
 biomass_revised <- cbind(Experiment.Tag, plantmass)
-# read L88_57 data and add one column of plant environment well-water(ww) and water-stress(ws)
+```
+read L88_57 data and add one column of plant environment well-water(ww) and water-stress(ws)
+```{r}
 L88ws <- read.csv("L88 57_ws_2016.csv")
 summary(L88ws)
 L88ws["environment"] <- "ws"
@@ -18,13 +32,17 @@ L88ww["environment"] <- "ww"
 ncol(L88ww)
 # combine two datasets together by rows
 L88 <- rbind(L88ws,L88ww)
-# match the biomass data with root data by experiment_tag
-# note the biomass data also consist of other species biomass. I only match common bean genotype L88_57.
+```
+match the biomass data with root data by experiment_tag
+note the biomass data also consist of other species biomass. I only match common bean genotype L88_57.
+```{r}
 biomass_merge <- merge(x=L88,y=biomass_revised,by="Experiment.Tag",all=T)
 biomass_merge <- biomass_merge[complete.cases(biomass_merge[,2]),]
 summary(biomass_merge)
-# I notice there are duplicates for the experiment_tag and root images, which are not expected.
-# I need to remove thoese duplicates and double check root images we took.
+```
+I notice there are duplicates for the experiment_tag and root images, which are not expected.
+I need to remove thoese duplicates and double check root images we took.
+```{r}
 n_occur <- data.frame(table(biomass_merge$Experiment.Tag))
 duplicates <- n_occur [n_occur$Freq>1,]
 duplicates
@@ -49,9 +67,12 @@ n_occur <- data.frame(table(L88_57_fixed $Experiment.Tag))
 duplicates <- n_occur [n_occur$Freq>1,]
 duplicates
 str(L88_57_fixed)
-# considering 35/667=0.052 NAs, which is a very small portion of whole dataset, I can drop those NAs
+```
+considering 35/667=0.052 NAs, which is a very small portion of whole dataset, I can drop those NAs
+```{r}
 L88_57_fixed <- L88_57_fixed[complete.cases(L88_57_fixed),]
 summary(L88_57_fixed)
 # now there is no missing data for each observations
 # here we get 12 variables of 632 observation 
 write.csv(L88_57_fixed, file="L88_57_2016_fixed.csv")
+```

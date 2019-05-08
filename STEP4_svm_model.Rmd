@@ -1,5 +1,11 @@
-#The support-vector machines are supervised learning models for classification and regression. 
-# The linear svm is easier to intepret, while it maybe less accurate to predcit.
+---
+title: "STEP5_svm_model"
+author: "Limeng Xie"
+date: "5/8/2019"
+output: html_document
+---
+#The support-vector machines are supervised learning models for classification and regression.The linear svm is easier to intepret, while it maybe less accurate to predcit.
+```{r}
 library(caret)
 setwd("/Users/limengxie/Desktop/INFO8000ProjectMomo/")
 data_model <- read.csv("data_model.csv")
@@ -21,32 +27,33 @@ fitControl <- trainControl(
 set.seed(981395)
 svmFit1 <- train(environment ~TAP_DIA+plantmass+TD_AVG+RTP_COUNT+HYP_DIA+DIA_STM,data=trainNormalized,method="svmLinear",tr=fitControl)
 svmFit1
+# add area variable didn't increase the accuracy 
 svmFit2 <- train(environment ~TAP_DIA+plantmass+TD_AVG+RTP_COUNT+HYP_DIA+DIA_STM+AREA,data=trainNormalized,method="svmLinear",tr=fitControl)
 svmFit2
-# add area variable didn't increase the accuracy 
+# add AVG_DENSITY decrease the accuracy 
 svmFit3 <- train(environment ~TAP_DIA+plantmass+TD_AVG+RTP_COUNT+HYP_DIA+DIA_STM+AVG_DENSITY,data=trainNormalized,method="svmLinear",tr=fitControl)
 svmFit3
-# add AVG_DENSITY decrease the accuracy 
+# delete DIA_STM didn't decrease much accuracy
 svmFit4 <- train(environment ~TAP_DIA+plantmass+TD_AVG+RTP_COUNT+HYP_DIA,data=trainNormalized,method="svmLinear",tr=fitControl)
 svmFit4
-# delete DIA_STM didn't decrease much accuracy
+# delete RTP_COUNT reduce accuracy, so I keep it in the model
 svmFit5 <- train(environment ~TAP_DIA+plantmass+TD_AVG+HYP_DIA,data=trainNormalized,method="svmLinear",tr=fitControl)
 svmFit5
-# delete RTP_COUNT reduce accuracy, so I keep it in the model
+# delete HYP_DIA didn't reduce accuracy
 svmFit6<- train(environment ~TAP_DIA+plantmass+TD_AVG+RTP_COUNT,data=trainNormalized,method="svmLinear",tr=fitControl)
 svmFit6
-# delete HYP_DIA didn't reduce accuracy
+# delete plantmass reduce accuracy, so I keep plantmass in the model 
 svmFit7<- train(environment ~TAP_DIA+TD_AVG+RTP_COUNT,data=trainNormalized,method="svmLinear",tr=fitControl)
 svmFit7
-# delete plantmass reduce accuracy, so I keep plantmass in the model 
+# delete TD_AVG largely reduce the accuracy. must include TD_AVG
 svmFit7<- train(environment ~TAP_DIA+RTP_COUNT+plantmass,data=trainNormalized,method="svmLinear",tr=fitControl)
 svmFit7
-# delete TD_AVG largely reduce the accuracy. must include
+# delete TAP_DIA didn't reduce the accuray.
 svmFit8<- train(environment ~RTP_COUNT+plantmass+TD_AVG,data=trainNormalized,method="svmLinear",tr=fitControl)
 svmFit8
-# delete TAP_DIA didn't reduce the accuray.
-# svmFit8 is our final svm model with 3 variables. Seems very good, may not overfitting data.
+# svmFit8 is our final svm model with 3 variables. Seems very good, not overfitting data. We can see svmFit8 model are linked with RTP_COUNT, plantmass, TD_AVG, which means those three traits are largely affected by water stress
 pred <- predict(svmFit8, newdata = testNormalized)
 truth <- testNormalized$environment
 confusionMatrix(pred,truth)
-# the accuracy is more than 80%, which is pretty good. 
+# the accuracy is more than 80%, which is pretty good. I will use svm model for shiny app, because it is a simple model.
+```
